@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.py[cod]
+results/data/*.csv
+results/graphs/*.png
+.agents/
+skills-lock.json
