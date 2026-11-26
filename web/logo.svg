@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <title>Matrix Lab</title>
+  <path d="M10 9H7V31H10M30 9H33V31H30" stroke="#24583D" stroke-width="2" stroke-linecap="square"/>
+  <g fill="#4A8A68"><rect x="12" y="10" width="4" height="4" rx=".6"/><rect x="18" y="10" width="4" height="4" rx=".6"/><rect x="24" y="10" width="4" height="4" rx=".6"/></g>
+  <g fill="#00C778"><rect x="12" y="18" width="4" height="4" rx=".6"/><rect x="18" y="18" width="4" height="4" rx=".6"/><rect x="24" y="18" width="4" height="4" rx=".6"/></g>
+  <g fill="#24583D"><rect x="12" y="26" width="4" height="4" rx=".6"/><rect x="18" y="26" width="4" height="4" rx=".6"/><rect x="24" y="26" width="4" height="4" rx=".6"/></g>
+</svg>

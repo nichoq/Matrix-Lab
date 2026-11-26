@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 results/data/*.csv
+results/data/*.jsonl
+results/data/*.json
+results/graphs/*.svg
 results/graphs/*.png
 .agents/
 skills-lock.json
