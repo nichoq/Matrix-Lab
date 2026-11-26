@@ -34,7 +34,7 @@ function setBusy(value) {
 }
 function ownerOf(partition, row) { return partition.find(p => row >= p.start && row < p.start + p.count).rank; }
 function renderOwnership(id, partition) {
-  $(id).innerHTML = partition.map(p => `<div class="rank" style="${rankStyle(p.rank)}"><strong>Rank ${p.rank}</strong><p>${p.count ? `Rows ${p.start + 1}${p.count > 1 ? `–${p.start + p.count}` : ''} of A → same rows of C` : 'No rows assigned (idle)'}<br>Receives all of B</p></div>`).join('');
+  $(id).innerHTML = partition.map(p => `<div class="rank" style="${rankStyle(p.rank)}"><div class="rank-top"><span class="rank-avatar" aria-hidden="true"><i></i><i></i></span><div class="rank-title"><small>MPI process</small><strong>Rank ${p.rank}</strong></div></div><div class="rank-assignment"><span>Assigned work</span><strong>${p.count ? `Rows ${p.start + 1}${p.count > 1 ? `–${p.start + p.count}` : ''} of A → C` : 'No rows assigned'}</strong></div><p>${p.count ? 'Calculates its assigned rows' : 'Idle for this calculation'} · Receives all of B</p></div>`).join('');
 }
 function matrixMarkup(values, label, partition, key, interactive = false, selected = null) {
   const row = selected === null ? -1 : Math.floor(selected / values.length), col = selected === null ? -1 : selected % values.length;
@@ -100,6 +100,7 @@ $('demo-form').addEventListener('submit', async e => {
   e.preventDefault(); if(busy) return;
   const body = {size:Number($('demo-size').value),processes:Number($('demo-processes').value)};
   setBusy(true); stopPlayback(); $('demo-error').classList.add('hidden');
+  $('demo-form').classList.add('is-calculating'); $('demo-form').setAttribute('aria-busy','true');
   $('demo-status').textContent = 'Calculating with MPI and checking the complete result…';
   try {
     demo = await post('/api/demo',body);
@@ -107,7 +108,7 @@ $('demo-form').addEventListener('submit', async e => {
     $('demo-status').textContent = `${demo.size} × ${demo.size} · ${demo.processes} MPI ranks · full result verified against sequential multiplication.`;
     selectCell(0); renderOwnership('demo-ownership',demo.partition);
   } catch(error) { errorAt('demo-error',error); $('demo-status').textContent = 'Example failed. Previous example, if shown, is unchanged.'; }
-  finally { setBusy(false); }
+  finally { $('demo-form').classList.remove('is-calculating'); $('demo-form').removeAttribute('aria-busy'); setBusy(false); }
 });
 
 function showRun(result,index) {
@@ -201,7 +202,7 @@ function chart(id, title, series, xLabel, yLabel, reference = null) {
   const x = n => maxX === minX ? (w+left-right)/2 : left + (n-minX)/(maxX-minX)*(w-left-right);
   const y = n => h-bottom-n/maxY*(h-top-bottom);
   const tick = n => n === 0 ? '0' : n < .0001 ? n.toExponential(0) : Number(n.toPrecision(5)).toString();
-  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="${escapeHtml(title)}"><title>${escapeHtml(title)}</title><rect width="${w}" height="${h}" fill="#ffffff"/><g font-family="Segoe UI, sans-serif" font-size="11" fill="#617869"><text class="plot-title" x="${w/2}" y="23" text-anchor="middle" font-size="13" font-weight="600" fill="#294e3a">${escapeHtml(title)}</text>`;
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="${escapeHtml(title)}"><title>${escapeHtml(title)}</title><rect width="${w}" height="${h}" fill="#ffffff"/><g font-family="Space Grotesk, sans-serif" font-size="11" fill="#617869"><text class="plot-title" x="${w/2}" y="23" text-anchor="middle" font-size="13" font-weight="600" fill="#294e3a">${escapeHtml(title)}</text>`;
   for(let i=0;i<=Math.round(maxY/tickStep);i++) {
     const value = i*tickStep, py = y(value);
     svg += `<line x1="${left}" x2="${w-right}" y1="${py}" y2="${py}" stroke="${i===0?'#cadbd0':'#e7efe9'}"${i===0?'':' stroke-dasharray="3 5"'}/><text x="${left-12}" y="${py+4}" text-anchor="end">${tick(value)}</text>`;
@@ -269,9 +270,9 @@ document.querySelectorAll('.graph-download').forEach(button=>button.addEventList
   const rect = document.createElementNS(ns,'rect'); rect.setAttribute('y',String(height)); rect.setAttribute('width',String(width)); rect.setAttribute('height',String(extra)); rect.setAttribute('fill','#ffffff'); clone.append(rect);
   labels.forEach((label,i)=> {
     const line=document.createElementNS(ns,'line'); line.setAttribute('x1','30'); line.setAttribute('x2','55'); line.setAttribute('y1',String(height+18+i*22)); line.setAttribute('y2',String(height+18+i*22)); line.setAttribute('stroke',label.dataset.color); line.setAttribute('stroke-width','3'); if(label.dataset.dashed === 'true') line.setAttribute('stroke-dasharray','5 4'); clone.append(line);
-    const node=legend.cloneNode(); node.setAttribute('x','66'); node.setAttribute('y',String(height+22+i*22)); node.setAttribute('font-size','12'); node.setAttribute('font-family','Segoe UI, sans-serif'); node.setAttribute('fill','#35563f'); node.textContent=label.textContent; clone.append(node);
+    const node=legend.cloneNode(); node.setAttribute('x','66'); node.setAttribute('y',String(height+22+i*22)); node.setAttribute('font-size','12'); node.setAttribute('font-family','Space Grotesk, sans-serif'); node.setAttribute('fill','#35563f'); node.textContent=label.textContent; clone.append(node);
   });
-  ['Latest saved run per setup', 'Trials and seeds are in run details'].forEach((text,i)=>{const context=legend.cloneNode(); context.setAttribute('x','30'); context.setAttribute('y',String(height+40+labels.length*22+i*20)); context.setAttribute('font-size','12'); context.setAttribute('font-family','Segoe UI, sans-serif'); context.setAttribute('fill','#35563f'); context.textContent=text; clone.append(context);});
+  ['Latest saved run per setup', 'Trials and seeds are in run details'].forEach((text,i)=>{const context=legend.cloneNode(); context.setAttribute('x','30'); context.setAttribute('y',String(height+40+labels.length*22+i*20)); context.setAttribute('font-size','12'); context.setAttribute('font-family','Space Grotesk, sans-serif'); context.setAttribute('fill','#35563f'); context.textContent=text; clone.append(context);});
   // Each series already has a title on every point; include a readable legend in exports.
   download(new XMLSerializer().serializeToString(clone),`matrix-lab-${button.dataset.chart}.svg`,'image/svg+xml');
 }));

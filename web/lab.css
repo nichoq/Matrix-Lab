@@ -213,3 +213,54 @@ html{scroll-padding-bottom:115px}
 @media(max-width:650px){.lab-navigation [role=tab]{min-width:0;padding-inline:16px}}
 @media(max-width:850px){.demo-intro-layout{gap:35px;grid-template-columns:minmax(0,1fr) 340px}.demo-intro-layout #demo-form.calculator{width:340px}}
 @media(max-width:650px){.demo-intro-layout{grid-template-columns:1fr;gap:28px;margin-block:0 28px}.demo-intro-layout #demo-form.calculator{width:360px;margin-inline:auto}.demo-intro-copy .lead{max-width:none}}
+
+/* Calculator feedback while the MPI example is running. */
+.calculator-loading{display:none;align-items:center;gap:9px;color:#355b3b;font-size:.95rem;font-weight:700}
+.calculator-dots{display:flex;gap:4px;align-items:center}
+.calculator-dots i{width:6px;height:6px;border-radius:50%;background:#52774a;animation:calculator-pulse 1s ease-in-out infinite}
+.calculator-dots i:nth-child(2){animation-delay:.15s}.calculator-dots i:nth-child(3){animation-delay:.3s}
+.is-calculating .calculator-loading{display:flex}.is-calculating #calculator-size{display:none}
+.is-calculating .calculator-face i{animation:calculator-think 1.2s ease-in-out infinite}
+.is-calculating .calculator-face span{height:6px;width:6px;top:21px;border:2px solid #537447;border-radius:50%}
+@keyframes calculator-pulse{0%,100%{opacity:.35;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+@keyframes calculator-think{50%{transform:scaleY(.4)}}
+@media(prefers-reduced-motion:reduce){.calculator-dots i,.is-calculating .calculator-face i{animation:none!important}}
+
+/* Calculation and row ownership cards. */
+#demonstration .calculation{background:#fff;border:1px solid #e0ede4;border-radius:24px;padding:28px;box-shadow:0 8px 30px #183f280a}
+#demonstration .calculation .section-title{padding-bottom:18px;border-bottom:1px solid #edf4ef;gap:16px}
+#demonstration #cell-title{font-size:1.22rem;letter-spacing:-.025em;color:#173d29}
+#demonstration #cell-owner{color:#597163;font-size:.9rem;line-height:1.65;margin:16px 0 0}
+#demonstration .dot-product{gap:10px;align-items:center;padding:18px;background:#f5faf6;border-radius:16px;overflow-x:auto}
+#demonstration .term{min-width:76px;padding:13px 16px;border-radius:12px;background:#e5f0e8;color:#234d33}
+#demonstration .term.active{background:#d5f4e1;box-shadow:inset 0 -3px #59bd80}
+#demonstration .term.pending{opacity:.65}
+#demonstration .term.sum{background:#164c31;color:#fff;box-shadow:none}
+#demonstration .equals{color:#71937b;font-weight:700}
+#demonstration .ownership{gap:12px;margin:18px 0 22px}
+#demonstration .ownership .rank{position:relative;overflow:hidden;border:1px solid #dcebe0;border-radius:18px;padding:18px 18px 17px 22px;background:var(--rank-bg);box-shadow:none}
+#demonstration .ownership .rank:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--rank-ink)}
+#demonstration .ownership .rank strong{font-size:.92rem;color:#173d29}
+#demonstration .ownership .rank p{margin:8px 0 0;font-size:.82rem;line-height:1.6;color:#355b43}
+@media(max-width:650px){#demonstration .calculation{padding:20px}#demonstration .dot-product{padding:12px;gap:7px}#demonstration .term{min-width:64px;padding:11px}#demonstration .ownership{grid-template-columns:1fr}#demonstration .ownership .rank{padding:15px 15px 15px 20px}}
+
+/* Calculator introduction typography. */
+.demo-intro-copy h2{font-size:clamp(2rem,3.2vw,2.55rem)}
+.demo-intro-copy .lead{font-size:1.05rem}
+@media(max-width:650px){.demo-intro-copy h2{font-size:2rem}.demo-intro-copy .lead{font-size:1rem}}
+.demo-intro-copy h2{font-size:clamp(3rem,5vw,4.5rem);line-height:1.05;letter-spacing:-.06em}@media(max-width:650px){.demo-intro-copy h2{font-size:clamp(2.6rem,10vw,3.4rem)}}
+
+/* Row ownership: each rank has a distinct color and assignment. */
+.ownership{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+#demonstration .ownership .rank,.ownership .rank{padding:18px;border:1px solid #e2eee5;border-radius:18px;background:#fff;box-shadow:0 6px 22px #214a3009;overflow:hidden}
+#demonstration .ownership .rank:before{display:none}
+.rank-top{display:flex;align-items:center;gap:12px}
+.rank-avatar{display:flex;align-items:center;justify-content:center;gap:5px;width:42px;height:42px;flex:0 0 42px;border-radius:12px;background:var(--rank-bg);border:2px solid var(--rank-ink)}
+.rank-avatar i{display:block;width:5px;height:6px;border-radius:2px;background:var(--rank-ink)}
+.rank-title small{display:block;color:#6a8172;font-size:.7rem;line-height:1.2;margin:0 0 3px}
+#demonstration .ownership .rank-title strong,.ownership .rank-title strong{display:block;color:#1c3e2a;font-size:1rem;line-height:1.2}
+.rank-assignment{margin-top:16px;padding:12px 13px;border-radius:11px;background:var(--rank-bg)}
+.rank-assignment span{display:block;color:#4b6b56;font-size:.7rem;margin-bottom:4px}
+#demonstration .ownership .rank-assignment strong,.ownership .rank-assignment strong{font-size:.86rem;color:#204a30;line-height:1.4}
+#demonstration .ownership .rank p,.ownership .rank p{font-size:.76rem;color:#698071;line-height:1.5;margin:12px 0 0}
+@media(max-width:650px){#demonstration .ownership{grid-template-columns:1fr}#demonstration .ownership .rank{padding:16px}}
