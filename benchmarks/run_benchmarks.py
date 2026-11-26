@@ -5,10 +5,35 @@ import json
 import shutil
 import subprocess
 import sys
+import os
+from datetime import datetime, timezone
 from pathlib import Path
 from statistics import median
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def mpi_launcher(mpiexec="mpiexec"):
+    launcher = shutil.which(mpiexec)
+    if not launcher and mpiexec == "mpiexec" and os.name == "nt":
+        candidate = Path(os.environ.get("ProgramFiles", "C:/Program Files")) / "Microsoft MPI/Bin/mpiexec.exe"
+        if candidate.is_file():
+            launcher = str(candidate)
+    if not launcher:
+        raise RuntimeError("MPI launcher not found. Install MPI and make mpiexec available on PATH.")
+    return launcher
+
+
+def run_demo(size, processes):
+    if not (2 <= size <= 5 and 1 <= processes <= 8):
+        raise ValueError("Use demonstration size 2–5 and processes 1–8.")
+    result = invoke([mpi_launcher(), "-n", str(processes), sys.executable,
+                     "-m", "src.parallel", "--size", str(size), "--demo"])
+    if not result["correct"]:
+        raise RuntimeError("Demonstration did not match the sequential reference.")
+    # Demonstration timing is deliberately not reported as a benchmark.
+    return {key: result[key] for key in ("size", "processes", "correct", "preview",
+                                        "partition", "max_absolute_error")}
 
 
 def invoke(command):
@@ -25,8 +50,7 @@ def invoke(command):
 def run_case(size, processes, repeats=3, seed=42, mpiexec="mpiexec"):
     if min(size, processes, repeats) < 1:
         raise ValueError("Size, process count, and repeats must be positive.")
-    if not shutil.which(mpiexec):
-        raise RuntimeError("MPI launcher not found. Install MPI and make mpiexec available on PATH.")
+    mpiexec = mpi_launcher(mpiexec)
     common = ["--size", str(size), "--seed", str(seed)]
     seq, parallel = [], []
     for _ in range(repeats):
@@ -40,7 +64,11 @@ def run_case(size, processes, repeats=3, seed=42, mpiexec="mpiexec"):
     return {"size": size, "processes": processes, "repeats": repeats, "seed": seed,
             "sequential_seconds": sequential_time, "parallel_seconds": parallel_time,
             "speedup": speedup, "efficiency_percent": 100 * speedup / processes,
-            "correct": True, "sequential_trials": seq, "parallel_trials": parallel}
+            "correct": True, "sequential_trials": seq, "parallel_trials": parallel,
+            "preview": result["preview"], "partition": result["partition"],
+            "max_absolute_error": result["max_absolute_error"],
+            "environment": result["environment"],
+            "recorded_at": datetime.now(timezone.utc).isoformat()}
 
 
 def main():

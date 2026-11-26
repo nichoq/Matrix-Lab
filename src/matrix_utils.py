@@ -20,6 +20,14 @@ def multiply(a, b):
     return a @ b
 
 
+def make_demo_matrices(size):
+    """Small integer-valued inputs that make a dot product easy to follow."""
+    if not 2 <= size <= 5:
+        raise ValueError("Demonstration size must be between 2 and 5.")
+    a = np.arange(1, size * size + 1, dtype=np.float64).reshape(size, size)
+    return a, a + size * size
+
+
 def row_partition(size, processes):
     """Return row counts and offsets, including for uneven distributions."""
     base, remainder = divmod(size, processes)

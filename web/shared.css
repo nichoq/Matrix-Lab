@@ -1,0 +1,60 @@
+/* Shared identity and page furniture. Loaded after each page's own styles. */
+.matrix-logo{display:inline-block;width:32px;height:32px;flex-shrink:0;vertical-align:middle}
+body>header{position:relative;display:flex;align-items:center;justify-content:space-between;gap:24px;max-width:none;min-height:81px;margin:0;padding:21px max(24px,calc((100% - 1120px)/2));background:#fbfdfc;color:#172e23;border-bottom:1px solid #cbd8d4}
+body>header .brand{display:inline-flex;align-items:center;gap:10px;color:#172e23;font:750 .92rem system-ui,sans-serif!important;text-decoration:none;white-space:nowrap;letter-spacing:.01em}
+body>header .brand .matrix-logo{width:34px;height:34px}
+body>header nav{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:32px;white-space:nowrap}
+body>header nav a{font:650 .95rem system-ui,sans-serif!important;color:#172e23;text-decoration:none}
+body>header nav a[aria-current=page]{border-bottom:2px solid #00bf75;padding-bottom:7px}
+body>footer.matrix-footer{max-width:1120px;width:calc(100% - 48px);margin:0 auto;padding:22px 0 30px;border-top:1px solid #d9e7dd;display:flex;justify-content:space-between;align-items:center;gap:20px;color:#617367;font:400 .75rem/1.6 system-ui,sans-serif!important}
+body>footer.matrix-footer span{font-family:system-ui,sans-serif!important}
+.matrix-footer .footer-brand{display:inline-flex;align-items:center;gap:9px}
+.matrix-footer .matrix-logo{width:22px;height:22px}
+.matrix-mark .matrix-logo{width:64px;height:64px;margin-bottom:20px}
+.flow-result .matrix-logo{width:32px;height:32px}
+/* Keep the same softer visual language on the introductory pages. */
+body>header{border-bottom:0;box-shadow:0 1px 0 #17432b05}
+body>footer.matrix-footer{border-top:0}
+.landing .illustration{border:0;border-radius:24px;box-shadow:0 12px 40px #17432b0d;overflow:hidden}
+.landing .windowbar{border:0;background:#edf5f0}
+.landing .buttons a{border:0;border-radius:12px;transition:background .18s,transform .18s}
+.landing .buttons a:hover{transform:translateY(-1px)}
+.landing .buttons .learn{background:#e8f2ec}
+.journey-grid article{border:0;border-radius:22px;background:#f0f7f2}
+.journey-art{border-radius:15px}
+.content .step-nav{border:0;border-radius:17px;padding:6px;gap:5px;background:#e8f2ec}
+.content .step-nav button{border:0;border-radius:12px;background:transparent;box-shadow:none}
+.content .step-nav button[aria-pressed=true]{background:#fff;box-shadow:0 3px 12px #17432b0a}
+.content .step-nav button span{border-radius:8px}
+.content .walk{border:0;border-radius:24px;overflow:hidden;box-shadow:0 10px 40px #17432b08}
+.content .walk .scene{border:0}
+.content .controls button,.content .finish a{border:0;border-radius:11px;background:#e9f3ed}
+.content .controls .next{background:#00df85}
+.content .tip{border:0;border-radius:18px}
+.content .compare article{border:0;border-radius:22px;background:#f2f8f4}
+.content .flow-art{border-radius:16px}
+.content .step-nav{position:relative;isolation:isolate}
+.content .step-nav::before{content:"";position:absolute;top:6px;bottom:6px;left:0;width:var(--selection-width,calc((100% - 22px)/3));transform:translateX(var(--selection-x,6px));background:#fff;border-radius:12px;box-shadow:0 3px 12px #17432b0a;transition:transform .32s cubic-bezier(.22,.7,.25,1),width .32s cubic-bezier(.22,.7,.25,1);z-index:-1;pointer-events:none}
+.content .step-nav button,.content .step-nav button[aria-pressed=true]{background:transparent;box-shadow:none;transition:color .24s ease}
+.content .step-nav button span{transition:background .24s ease,color .24s ease}
+.content .controls{width:100%;justify-content:space-between;gap:12px}
+.content .controls button{display:grid;place-items:center;width:44px;height:44px;min-height:44px;padding:0;color:#17442d;transition:background .18s ease,transform .18s ease}
+.content .controls button:hover{background:#d5eddf;transform:translateY(-1px)}
+.content .controls button.next{margin-left:auto;background:#00df85}
+.content .controls button.next{background:#e9f3ed;color:#17442d}
+.content .controls button.next:hover{background:#d5eddf}
+.content>.section-top:first-child{align-items:center}
+.content>.section-top:first-child>p{margin:0;line-height:1.5}
+.content .walk+.section-top{margin-top:64px;margin-bottom:22px}
+@media(max-width:760px){.content .walk+.section-top{margin-top:44px;margin-bottom:18px}}
+.content .controls button svg{width:21px;height:21px}
+[hidden]{display:none!important}
+.content .compare article{padding:24px}
+.content .compare .flow-art{margin-bottom:24px}
+.content .compare article h3{margin:0 0 10px}
+.content .compare article p{margin:0;line-height:1.7}
+.content .finish a{color:#143f2b;background:#00df85;font-weight:750;padding:15px 22px;line-height:1.4;text-align:center;text-decoration:none}
+.content .finish a:hover{background:#00c975;color:#103722}
+@media(max-width:760px){.content .compare article{padding:20px}.content .compare .flow-art{margin-bottom:20px}}
+@media(prefers-reduced-motion:reduce){.content .step-nav::before,.content .step-nav button,.content .step-nav button span,.content .controls button{transition:none!important}}
+@media(max-width:760px){body>header{flex-wrap:wrap;gap:21px;padding:18px 24px}body>header nav{position:static;transform:none;order:3;width:100%;justify-content:space-between;gap:14px}body>header nav a{font-size:.86rem!important}body>footer.matrix-footer{flex-wrap:wrap;gap:12px}}
