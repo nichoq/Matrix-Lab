@@ -264,3 +264,21 @@ html{scroll-padding-bottom:115px}
 #demonstration .ownership .rank-assignment strong,.ownership .rank-assignment strong{font-size:.86rem;color:#204a30;line-height:1.4}
 #demonstration .ownership .rank p,.ownership .rank p{font-size:.76rem;color:#698071;line-height:1.5;margin:12px 0 0}
 @media(max-width:650px){#demonstration .ownership{grid-template-columns:1fr}#demonstration .ownership .rank{padding:16px}}
+
+/* Keep long benchmark history contained and its headings visible. */
+#history .table-scroll{max-height:420px;overflow:auto;overscroll-behavior:contain}
+#history .history-table thead th{position:sticky;top:0;z-index:2;background:#f1f7f3}
+#history .table-scroll:focus-visible{outline:3px solid #097d53;outline-offset:3px}
+@media(max-width:650px){#history .table-scroll{max-height:340px}}
+
+/* Keep the table header opaque at the top of its scroll area. */
+#history .table-scroll{padding-top:0}
+#history .history-table thead th{border-radius:0;background:#f1f7f3;background-clip:padding-box}
+
+/* Keep scrolling rows behind the header at the rounded container edges. */
+#history .table-scroll{padding-left:0;padding-right:0}
+#history .history-table thead th:first-child{border-radius:0}
+#history .history-table thead th:last-child{border-radius:0}
+/* An empty history has a stable, readable placeholder. */
+#history .history-empty{min-height:220px;display:grid;place-items:center;text-align:center;padding:28px;background:#fff;border-radius:20px;box-shadow:0 8px 35px #183f2807;color:#60786a;font-size:1rem;font-weight:600}
+#history .history-empty[hidden],#history .table-scroll[hidden]{display:none!important}

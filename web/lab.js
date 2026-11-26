@@ -120,7 +120,7 @@ function showRun(result,index) {
   const max = Math.max(result.sequential_seconds,result.parallel_seconds);
   $('seqbar').style.width = result.sequential_seconds/max*100+'%'; $('parbar').style.width = result.parallel_seconds/max*100+'%';
   $('interpretation').textContent = result.speedup >= 1 ? `MPI was ${result.speedup.toFixed(2)}× as fast as sequential in this experiment. Efficiency was ${result.efficiency_percent.toFixed(1)}% across ${result.processes} processes.` : `Sequential was faster in this experiment (MPI speedup ${result.speedup.toFixed(2)}×). Communication and other parallel overhead can outweigh the benefit of dividing the work.`;
-  $('trial-details').innerHTML = `<h4>Individual trials</h4><table class="trial-table"><thead><tr><th scope="col">Trial</th><th scope="col">Sequential (s)</th><th scope="col">MPI (s)</th></tr></thead><tbody>${result.sequential_trials.map((t,i) => `<tr><th scope="row">${i+1}</th><td>${seconds(t)}</td><td>${seconds(result.parallel_trials[i])}</td></tr>`).join('')}</tbody></table>`;
+  $('trial-details').innerHTML = `<h4>Individual trials</h4><table class="trial-table"><thead><tr><th scope="col">Trial</th><th scope="col">Sequential (s)</th><th scope="col">Parallel (s)</th></tr></thead><tbody>${result.sequential_trials.map((t,i) => `<tr><th scope="row">${i+1}</th><td>${seconds(t)}</td><td>${seconds(result.parallel_trials[i])}</td></tr>`).join('')}</tbody></table>`;
   $('preview-section').classList.remove('hidden');
   $('preview-note').textContent = result.size <= 5 ? `Complete ${result.size} × ${result.size} matrices. Values shown to 3 decimal places; hover for full precision.` : `Top-left ${result.preview.shown} × ${result.preview.shown} of each ${result.size} × ${result.size} matrix. Values rounded to 3 decimals. C was computed using the full matrices, not just these corners. Hover for full precision.`;
   $('preview-matrices').innerHTML = matricesMarkup(result);
@@ -172,6 +172,9 @@ $('suite-run').addEventListener('click', async () => {
 });
 
 function renderHistory() {
+  $('history-empty').hidden = history.length > 0;
+  $('history-empty').textContent = 'No completed benchmarks yet.';
+  $('history-table-container').hidden = history.length === 0;
   $('history-status').textContent = history.length ? `${history.length} saved experiment${history.length === 1 ? '' : 's'}. Times are medians; all listed results passed full-matrix verification.` : 'No saved experiments yet. Run one configuration or the nine-case suite to start comparing.';
   $('history-rows').innerHTML = history.map((r,i) => `<tr${i === selectedRun ? ' class="current"' : ''}><td title="${escapeHtml(new Date(r.recorded_at).toLocaleString())}">${i+1}</td><td>${r.size} × ${r.size}</td><td>${r.processes}</td><td>${r.repeats}</td><td>${r.seed}</td><td>${seconds(r.sequential_seconds)}</td><td>${seconds(r.parallel_seconds)}</td><td>${r.speedup.toFixed(3)}×</td><td>${r.efficiency_percent.toFixed(2)}%</td><td><button class="inspect-run" data-run="${i}" aria-label="Inspect run ${i+1}">Inspect</button></td></tr>`).reverse().join('');
   $('export-csv').disabled = $('export-json').disabled = !history.length;
@@ -220,7 +223,8 @@ function chart(id, title, series, xLabel, yLabel, reference = null) {
 }
 function renderGraphs() {
   const rows = latestConfigurations(), sizes = [...new Set(rows.map(r=>r.size))].sort((a,b)=>a-b), current = Number($('graph-size').value);
-  $('graph-size').innerHTML = sizes.map(size=>`<option value="${size}">${size} × ${size}</option>`).join('');
+  $('graph-size').disabled = sizes.length === 0;
+  $('graph-size').innerHTML = sizes.length ? sizes.map(size=>`<option value="${size}">${size} × ${size}</option>`).join('') : '<option value="">No completed benchmarks yet</option>';
   if(sizes.includes(current)) $('graph-size').value = current;
   else if(sizes.length) $('graph-size').value = sizes[sizes.length-1];
   const counts = [...new Set(rows.map(r=>r.processes))].sort((a,b)=>a-b), series = [];
@@ -281,7 +285,7 @@ async function loadHistory() {
     const response = await fetch('/api/history'); const data = await response.json();
     if(!response.ok) throw new Error(data.error || 'Could not load history.');
     history = data; renderHistory(); if(history.length) showRun(history.at(-1),history.length-1);
-  } catch(error) { $('history-status').textContent = error.message+' Reload the page to try again.'; renderGraphs(); }
+  } catch(error) { $('history-status').textContent = error.message+' Reload the page to try again.'; $('history-empty').textContent = 'Could not load benchmarks. Reload the page to try again.'; $('history-empty').hidden = false; $('history-table-container').hidden = true; renderGraphs(); }
 }
 loadHistory();
 const labTabBar = document.querySelector('.lab-navigation');
